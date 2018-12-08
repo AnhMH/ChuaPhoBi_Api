@@ -60,19 +60,6 @@ class Model_Setting extends Model_Abstract {
             'get_sub_cates' => 1
         ));
         
-        // Get lastest post
-        
-        $result['latest_post'] = Model_Post::get_all(array(
-            'page' => 1,
-            'limit' => 3
-        ));
-        
-        $result['breaking_news'] = Model_Post::get_all(array(
-            'page' => 1,
-            'limit' => 4,
-            'is_hot' => 1
-        ));
-        
         // Get setting
         $result['settings'] = array(
             'web_title' => 'Con Là Tất Cả',
