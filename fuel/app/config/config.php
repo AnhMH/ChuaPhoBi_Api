@@ -330,6 +330,7 @@ return array(
             'cates/all',
             'posts/all',
             'posts/detail',
+            'posts/list',
             'posts/gethomedata',
             'settings/general'
         ),
