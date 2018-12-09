@@ -28,7 +28,8 @@ class Model_Post extends Model_Abstract {
         'type',
         'created',
         'updated',
-        'disable'
+        'disable',
+        'language_type'
     );
 
     protected static $_observers = array(
@@ -100,8 +101,8 @@ class Model_Post extends Model_Abstract {
         if (!empty($param['keyword'])) {
             $self->set('keyword', $param['keyword']);
         }
-        if (isset($param['type'])) {
-            $self->set('type', $param['type']);
+        if (isset($param['language_type'])) {
+            $self->set('language_type', $param['language_type']);
         }
         $self->set('updated', time());
         if ($new) {
@@ -144,6 +145,10 @@ class Model_Post extends Model_Abstract {
         // Filter
         if (!empty($param['name'])) {
             $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['name']}%");
+        }
+        
+        if (!empty($param['language_type'])) {
+            $query->where(self::$_table_name.'.language_type', $param['language_type']);
         }
         
         if (isset($param['disable']) && $param['disable'] != '') {
@@ -298,6 +303,10 @@ class Model_Post extends Model_Abstract {
         if (!empty($param['name'])) {
             $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['name']}%");
         }
+        
+        if (!empty($param['language_type'])) {
+            $query->where(self::$_table_name.'.language_type', $param['language_type']);
+        }
         if (!empty($param['cate_id'])) {
             if (!is_array($param['cate_id'])) {
                 $param['cate_id'] = explode(',', $param['cate_id']);
@@ -353,6 +362,7 @@ class Model_Post extends Model_Abstract {
     {
         // Init
         $result = array();
+        $languageType = !empty($param['language_type']) ? $param['language_type'] : 1;
         
         // Get posts data
         $posts = DB::select(
@@ -372,7 +382,7 @@ class Model_Post extends Model_Abstract {
                         posts
                     JOIN (SELECT @prev := NULL, @rn := 0) AS vars
                     WHERE
-                        disable = 0
+                        disable = 0 AND language_type = {$languageType}
                     ORDER BY
                         cate_id
                 ) AS posts
@@ -381,6 +391,7 @@ class Model_Post extends Model_Abstract {
             ->on('cates.id', '=', self::$_table_name.'.cate_id')
             ->where(DB::expr("rn <= 9"))
             ->where('cates.home_position', '>', 0)
+            ->where('cates.language_type', $languageType)
             ->execute()
             ->as_array()
         ;

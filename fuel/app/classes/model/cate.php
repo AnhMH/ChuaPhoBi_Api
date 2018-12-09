@@ -22,7 +22,8 @@ class Model_Cate extends Model_Abstract {
         'created',
         'updated',
         'disable',
-        'home_position'
+        'home_position',
+        'language_type'
     );
 
     protected static $_observers = array(
@@ -50,6 +51,7 @@ class Model_Cate extends Model_Abstract {
     {
         // Init
         $self = array();
+        $new = false;
         
         // Check if exist User
         if (!empty($param['id'])) {
@@ -60,6 +62,7 @@ class Model_Cate extends Model_Abstract {
             }
         } else {
             $self = new self;
+            $new = true;
         }
         
         // Set data
@@ -75,6 +78,13 @@ class Model_Cate extends Model_Abstract {
         }
         if (isset($param['home_position'])) {
             $self->set('home_position', $param['home_position']);
+        }
+        if (isset($param['language_type'])) {
+            $self->set('language_type', $param['language_type']);
+        }
+        $self->set('updated', time());
+        if ($new) {
+            $self->set('created', time());
         }
         
         // Save data
@@ -110,6 +120,9 @@ class Model_Cate extends Model_Abstract {
         // Filter
         if (!empty($param['name'])) {
             $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['name']}%");
+        }
+        if (!empty($param['language_type'])) {
+            $query->where(self::$_table_name.'.language_type', $param['language_type']);
         }
         
         if (isset($param['disable']) && $param['disable'] != '') {
@@ -216,6 +229,9 @@ class Model_Cate extends Model_Abstract {
         // Filter
         if (!empty($param['name'])) {
             $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['name']}%");
+        }
+        if (!empty($param['language_type'])) {
+            $query->where(self::$_table_name.'.language_type', $param['language_type']);
         }
         if (!empty($param['address'])) {
             $query->where(self::$_table_name.'.address', 'LIKE', "%{$param['address']}%");
