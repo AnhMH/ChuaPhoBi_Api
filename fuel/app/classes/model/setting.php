@@ -56,9 +56,10 @@ class Model_Setting extends Model_Abstract {
         $result = array();
         
         // Get cates
-        $result['cates'] = Model_Cate::get_all(array(
-            'get_sub_cates' => 1
-        ));
+        $result['cates'] = Lib\Arr::key_values(Model_Cate::get_all(array(
+            'get_sub_cates' => 1,
+            'sort' => 'order-asc'
+        )), 'id');
         
         // Get setting
         $result['settings'] = array(

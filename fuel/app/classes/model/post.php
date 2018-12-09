@@ -348,25 +348,12 @@ class Model_Post extends Model_Abstract {
         // Init
         $result = array();
         
-        // Get home slider
-        $result['sliders'] = self::get_all(array(
-            'page' => 1,
-            'limit' => 4,
-            'is_home_slide' => 1
-        ));
-        
-        // Get home slider
-        $result['medias'] = self::get_all(array(
-            'page' => 1,
-            'limit' => 4,
-            'type' => 2
-        ));
-        
         // Get posts data
-        $result['posts'] = DB::select(
+        $posts = DB::select(
                 self::$_table_name.'.*',
                 array('cates.name', 'cate_name'),
-                array('cates.url', 'cate_url')
+                array('cates.url', 'cate_url'),
+                'cates.home_position'
             )
             ->from(DB::expr("
                 (
@@ -386,10 +373,15 @@ class Model_Post extends Model_Abstract {
             "))
             ->join('cates', 'LEFT')
             ->on('cates.id', '=', self::$_table_name.'.cate_id')
-            ->where(DB::expr("rn <= 6"))
+            ->where(DB::expr("rn <= 9"))
+            ->where('cates.home_position', '>', 0)
             ->execute()
             ->as_array()
         ;
+        $result['posts'] = Lib\Arr::key_values2($posts, 'home_position');
+        foreach ($result['posts'] as &$p) {
+            $p = Lib\Arr::key_values2($p, 'cate_id');
+        }
         
         // Return data
         return $result;

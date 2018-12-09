@@ -21,7 +21,8 @@ class Model_Cate extends Model_Abstract {
         'order',
         'created',
         'updated',
-        'disable'
+        'disable',
+        'home_position'
     );
 
     protected static $_observers = array(
@@ -71,6 +72,9 @@ class Model_Cate extends Model_Abstract {
         }
         if (!empty($param['order'])) {
             $self->set('order', $param['order']);
+        }
+        if (isset($param['home_position'])) {
+            $self->set('home_position', $param['home_position']);
         }
         
         // Save data

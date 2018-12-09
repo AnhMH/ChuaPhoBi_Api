@@ -50,6 +50,24 @@ class Arr {
         }
         return $result;
     }
+    
+    /**
+     * Method key_values - filter array with key   
+     *  
+     * @author thailh
+     * @param array $arr Array need to filter
+     * @param string $key Key to filter
+     * @return array Array after filtering
+     */
+    public static function key_values2($arr, $key) {
+        $result = array();
+        if ($arr) {
+            foreach ($arr as $item) {
+                $result[$item[$key]][] = $item;
+            }
+        }
+        return $result;
+    }
 
     /**
      * Method field - filter array by field   
