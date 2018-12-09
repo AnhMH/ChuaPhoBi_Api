@@ -56,6 +56,7 @@ class Model_Post extends Model_Abstract {
     {
         // Init
         $self = array();
+        $new = false;
         
         // Check if exist User
         if (!empty($param['id'])) {
@@ -66,6 +67,7 @@ class Model_Post extends Model_Abstract {
             }
         } else {
             $self = new self;
+            $new = true;
         }
         
         // Upload image
@@ -100,6 +102,10 @@ class Model_Post extends Model_Abstract {
         }
         if (isset($param['type'])) {
             $self->set('type', $param['type']);
+        }
+        $self->set('updated', time());
+        if ($new) {
+            $self->set('created', time());
         }
         
         // Save data
