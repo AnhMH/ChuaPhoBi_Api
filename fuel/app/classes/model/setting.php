@@ -54,11 +54,13 @@ class Model_Setting extends Model_Abstract {
     {
         // Init
         $result = array();
+        $languageType = !empty($param['language_type']) ? $param['language_type'] : 1;
         
         // Get cates
         $result['cates'] = Lib\Arr::key_values(Model_Cate::get_all(array(
             'get_sub_cates' => 1,
-            'sort' => 'order-asc'
+            'sort' => 'order-asc',
+            'language_type' => $languageType
         )), 'id');
         
         // Get setting
