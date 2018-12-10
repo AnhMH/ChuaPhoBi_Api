@@ -17,4 +17,18 @@ class Controller_Settings extends \Controller_App {
     public function action_general() {
         return \Bus\Settings_General::getInstance()->execute();
     }
+    
+    /**
+     * Add update
+     */
+    public function action_addupdate() {
+        return \Bus\Settings_AddUpdate::getInstance()->execute();
+    }
+    
+    /**
+     * Detail
+     */
+    public function action_detail() {
+        return \Bus\Settings_Detail::getInstance()->execute();
+    }
 }

@@ -15,18 +15,18 @@ class Model_Setting extends Model_Abstract {
     /** @var array $_properties field of table */
     protected static $_properties = array(
         'id',
-        'cate_id',
+        'logo',
+        'welcome_text',
         'name',
-        'description',
-        'content',
-        'image',
-        'is_default',
-        'is_home_slide',
-        'is_hot',
-        'type',
-        'created',
-        'updated',
-        'disable'
+        'address',
+        'phone',
+        'email',
+        'facebook',
+        'twitter',
+        'instagram',
+        'google_plus',
+        'footer_text',
+        'language_type'
     );
 
     protected static $_observers = array(
@@ -64,21 +64,110 @@ class Model_Setting extends Model_Abstract {
         )), 'id');
         
         // Get setting
-        $result['settings'] = array(
-            'web_title' => 'Con Là Tất Cả',
-            'web_description' => 'Niềm vui của mẹ - Tự hào của cha - Con là tất cả. Cập nhật hàng ngày thông tin hữu ích liên quan đến cách chăm sóc, nuôi dạy con cái.',
-            'web_keyword' => 'con la tat ca, nuoi day con thong minh, nuoi day con dung cach',
-            'web_image' => 'https://img.conlatatca.info/conlatatca.png',
-            'facebook' => 'https://www.facebook.com/pageconlatatca',
-            'twitter' => 'https://twitter.com/',
-            'instagram' => 'https://www.instagram.com/conlatatcainfo/',
-            'google_plus' => 'https://plus.google.com/u/0/113674456774184840341?hl=vi',
-            'homepage_top_cate' => '3',
-            'homepage_sub_cate' => array(1,2,4),
-            'show_adv' => 1
-        );
+        $result['settings'] = self::get_detail(array(
+            'language_type' => $languageType
+        ));
                 
         // Return
         return $result;
+    }
+    
+    /**
+     * Add update info
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return int|bool User ID or false if error
+     */
+    public static function add_update($param)
+    {
+        // Init
+        $self = array();
+        $languageType = !empty($param['language_type']) ? $param['language_type'] : 1;
+        
+        // Get data
+        $self = self::find('first', array(
+            'where' => array(
+                'language_type' => $languageType
+            )
+        ));
+        if (empty($self)) {
+            $self = new self;
+        }
+        
+        // Upload image
+        if (!empty($_FILES)) {
+            $uploadResult = \Lib\Util::uploadImage(); 
+            if ($uploadResult['status'] != 200) {
+                self::setError($uploadResult['error']);
+                return false;
+            }
+            $param['logo'] = !empty($uploadResult['body']['logo']) ? $uploadResult['body']['logo'] : '';
+        }
+        
+        // Set data
+        if (!empty($param['name'])) {
+            $self->set('name', $param['name']);
+        }
+        if (!empty($param['logo'])) {
+            $self->set('logo', $param['logo']);
+        }
+        if (!empty($param['welcome_text'])) {
+            $self->set('welcome_text', $param['welcome_text']);
+        }
+        if (!empty($param['address'])) {
+            $self->set('address', $param['address']);
+        }
+        if (!empty($param['phone'])) {
+            $self->set('phone', $param['phone']);
+        }
+        if (!empty($param['email'])) {
+            $self->set('email', $param['email']);
+        }
+        if (!empty($param['facebook'])) {
+            $self->set('facebook', $param['facebook']);
+        }
+        if (!empty($param['twitter'])) {
+            $self->set('twitter', $param['twitter']);
+        }
+        if (!empty($param['instagram'])) {
+            $self->set('instagram', $param['instagram']);
+        }
+        if (!empty($param['google_plus'])) {
+            $self->set('google_plus', $param['google_plus']);
+        }
+        if (!empty($param['footer_text'])) {
+            $self->set('footer_text', $param['footer_text']);
+        }
+        $self->set('language_type', $languageType);
+        
+        // Save data
+        if ($self->save()) {
+            if (empty($self->id)) {
+                $self->id = self::cached_object($self)->_original['id'];
+            }
+            return $self->id;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Get detail
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return int|bool User ID or false if error
+     */
+    public static function get_detail($param)
+    {
+        $languageType = !empty($param['language_type']) ? $param['language_type'] : 1;
+        $data = self::find('first', array(
+            'where' => array(
+                'language_type' => $languageType
+            )
+        ));
+        
+        return !empty($data) ? $data : array();
     }
 }
