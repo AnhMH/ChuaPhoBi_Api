@@ -26,7 +26,8 @@ class Model_Setting extends Model_Abstract {
         'instagram',
         'google_plus',
         'footer_text',
-        'language_type'
+        'language_type',
+        'youtube'
     );
 
     protected static $_observers = array(
@@ -135,6 +136,9 @@ class Model_Setting extends Model_Abstract {
         }
         if (!empty($param['google_plus'])) {
             $self->set('google_plus', $param['google_plus']);
+        }
+        if (!empty($param['youtube'])) {
+            $self->set('youtube', $param['youtube']);
         }
         if (!empty($param['footer_text'])) {
             $self->set('footer_text', $param['footer_text']);
