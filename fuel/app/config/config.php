@@ -332,7 +332,8 @@ return array(
             'posts/detail',
             'posts/list',
             'posts/gethomedata',
-            'settings/general'
+            'settings/general',
+            'contacts/addupdate'
         ),
         'admin_authorize_url' => array(),
         'unauthorize_basic_token_url' => array(
