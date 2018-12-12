@@ -10,22 +10,14 @@ use Fuel\Core\DB;
  * @version 1.0
  * @author AnhMH
  */
-class Model_Post extends Model_Abstract {
+class Model_Notice extends Model_Abstract {
     
     /** @var array $_properties field of table */
     protected static $_properties = array(
         'id',
-        'cate_id',
         'name',
         'url',
-        'description',
-        'keyword',
         'content',
-        'image',
-        'is_default',
-        'is_home_slide',
-        'is_hot',
-        'type',
         'created',
         'updated',
         'disable',
@@ -44,7 +36,7 @@ class Model_Post extends Model_Abstract {
     );
 
     /** @var array $_table_name name of table */
-    protected static $_table_name = 'posts';
+    protected static $_table_name = 'notices';
 
     /**
      * Add update info
@@ -63,7 +55,7 @@ class Model_Post extends Model_Abstract {
         if (!empty($param['id'])) {
             $self = self::find($param['id']);
             if (empty($self)) {
-                self::errorNotExist('post_id');
+                self::errorNotExist('notice_id');
                 return false;
             }
         } else {
@@ -71,37 +63,15 @@ class Model_Post extends Model_Abstract {
             $new = true;
         }
         
-        // Upload image
-        if (!empty($_FILES)) {
-            $uploadResult = \Lib\Util::uploadImage(); 
-            if ($uploadResult['status'] != 200) {
-                self::setError($uploadResult['error']);
-                return false;
-            }
-            $param['image'] = !empty($uploadResult['body']['image']) ? $uploadResult['body']['image'] : '';
-        }
-        
         // Set data
         if (!empty($param['name'])) {
             $self->set('name', $param['name']);
             $self->set('url', \Lib\Str::convertURL($param['name']));
         }
-        if (!empty($param['cate_id'])) {
-            $self->set('cate_id', $param['cate_id']);
-        }
-        if (!empty($param['description'])) {
-            $self->set('description', $param['description']);
-        }
         if (!empty($param['content'])) {
             $self->set('content', $param['content']);
         }
-        if (!empty($param['image'])) {
-            $self->set('image', $param['image']);
-        }
-        if (!empty($param['keyword'])) {
-            $self->set('keyword', $param['keyword']);
-        }
-        if (isset($param['language_type'])) {
+        if (!empty($param['language_type'])) {
             $self->set('language_type', $param['language_type']);
         }
         $self->set('updated', time());
@@ -134,28 +104,15 @@ class Model_Post extends Model_Abstract {
         
         // Query
         $query = DB::select(
-                self::$_table_name.'.*',
-                array('cates.name', 'cate_name')
+                self::$_table_name.'.*'
             )
             ->from(self::$_table_name)
-            ->join('cates', 'left')
-            ->on('cates.id', '=', self::$_table_name.'.cate_id')
         ;
                         
         // Filter
         if (!empty($param['name'])) {
             $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['name']}%");
         }
-        if (!empty($param['keyword'])) {
-            $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['keyword']}%");
-        }
-        if (!empty($param['cate_id'])) {
-            if (!is_array($param['cate_id'])) {
-                $param['cate_id'] = explode(',', $param['cate_id']);
-            }
-            $query->where(self::$_table_name.'.cate_id', 'IN', $param['cate_id']);
-        }
-        
         if (!empty($param['language_type'])) {
             $query->where(self::$_table_name.'.language_type', $param['language_type']);
         }
@@ -210,13 +167,9 @@ class Model_Post extends Model_Abstract {
         $url = !empty($param['url']) ? $param['url'] : '';
         
         $query = DB::select(
-                self::$_table_name.'.*',
-                array('cates.name', 'cate_name'),
-                array('cates.url', 'cate_url')
+                self::$_table_name.'.*'
             )
             ->from(self::$_table_name)
-            ->join('cates', 'LEFT')
-            ->on('cates.id', '=', self::$_table_name.'.cate_id')
         ;
         if (!empty($url)) {
             $query->where(self::$_table_name.'.url', $url);
@@ -228,24 +181,8 @@ class Model_Post extends Model_Abstract {
         }
         $data = $query->execute()->offsetGet(0);
         if (empty($data)) {
-            self::errorNotExist('post_id');
+            self::errorNotExist('notice_id');
             return false;
-        }
-        
-        if (!empty($param['get_relations'])) {
-            $data['relations'] = DB::select(
-                    self::$_table_name.'.*',
-                    DB::expr("'{$data['cate_name']}' AS cate_name"),
-                    DB::expr("'{$data['cate_url']}' AS cate_url")
-                )
-                ->from(self::$_table_name)
-                ->where(self::$_table_name.'.disable', 0)
-                ->where(self::$_table_name.'.cate_id', $data['cate_id'])
-                ->order_by(self::$_table_name.'.created', 'DESC')
-                ->limit(6)
-                ->execute()
-                ->as_array()
-            ;
         }
         
         return $data;
@@ -287,26 +224,11 @@ class Model_Post extends Model_Abstract {
         // Init
         $adminId = !empty($param['admin_id']) ? $param['admin_id'] : '';
         
-        if (!empty($param['cate_url'])) {
-            $cate = Model_Cate::find('first', array(
-                'where' => array(
-                    'url' => $param['cate_url']
-                )
-            ));
-            if (!empty($cate['id'])) {
-                $param['cate_id'] = $cate['id'];
-            }
-        }
-        
         // Query
         $query = DB::select(
-                self::$_table_name.'.*',
-                array('cates.name', 'cate_name'),
-                array('cates.url', 'cate_url')
+                self::$_table_name.'.*'
             )
             ->from(self::$_table_name)
-            ->join('cates', 'LEFT')
-            ->on('cates.id', '=', self::$_table_name.'.cate_id')
             ->where(self::$_table_name.'.disable', 0)
         ;
                         
@@ -317,21 +239,6 @@ class Model_Post extends Model_Abstract {
         
         if (!empty($param['language_type'])) {
             $query->where(self::$_table_name.'.language_type', $param['language_type']);
-        }
-        if (!empty($param['cate_id'])) {
-            if (!is_array($param['cate_id'])) {
-                $param['cate_id'] = explode(',', $param['cate_id']);
-            }
-            $query->where(self::$_table_name.'.cate_id', 'IN', $param['cate_id']);
-        }
-        if (isset($param['is_hot']) && $param['is_hot'] != '') {
-            $query->where(self::$_table_name.'.is_hot', $param['is_hot']);
-        }
-        if (isset($param['is_home_slide']) && $param['is_home_slide'] != '') {
-            $query->where(self::$_table_name.'.is_home_slide', $param['is_home_slide']);
-        }
-        if (isset($param['type']) && $param['type'] != '') {
-            $query->where(self::$_table_name.'.type', $param['type']);
         }
         
         // Pagination
@@ -360,58 +267,5 @@ class Model_Post extends Model_Abstract {
         $data = $query->execute()->as_array();
         
         return $data;
-    }
-    
-    /**
-     * Get home data
-     *
-     * @author AnhMH
-     * @param array $param Input data
-     * @return array|bool
-     */
-    public static function get_home_data($param)
-    {
-        // Init
-        $result = array();
-        $languageType = !empty($param['language_type']) ? $param['language_type'] : 1;
-        
-        // Get posts data
-        $posts = DB::select(
-                self::$_table_name.'.*',
-                array('cates.name', 'cate_name'),
-                array('cates.url', 'cate_url'),
-                'cates.home_position'
-            )
-            ->from(DB::expr("
-                (
-                    SELECT
-			posts.*,
-			@rn :=
-                            IF (@prev = cate_id, @rn + 1, 1) AS rn,
-                        @prev := cate_id
-                    FROM
-                        posts
-                    JOIN (SELECT @prev := NULL, @rn := 0) AS vars
-                    WHERE
-                        disable = 0 AND language_type = {$languageType}
-                    ORDER BY
-                        cate_id
-                ) AS posts
-            "))
-            ->join('cates', 'LEFT')
-            ->on('cates.id', '=', self::$_table_name.'.cate_id')
-            ->where(DB::expr("rn <= 9"))
-            ->where('cates.home_position', '>', 0)
-            ->where('cates.language_type', $languageType)
-            ->execute()
-            ->as_array()
-        ;
-        $result['posts'] = Lib\Arr::key_values2($posts, 'home_position');
-        foreach ($result['posts'] as &$p) {
-            $p = Lib\Arr::key_values2($p, 'cate_id');
-        }
-        
-        // Return data
-        return $result;
     }
 }
