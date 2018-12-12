@@ -68,6 +68,13 @@ class Model_Setting extends Model_Abstract {
         $result['settings'] = self::get_detail(array(
             'language_type' => $languageType
         ));
+        
+        // Get notices
+        $result['notices'] = Model_Notice::get_all(array(
+            'language_type' => $languageType,
+            'page' => 1,
+            'limit' => 5
+        ));
                 
         // Return
         return $result;
