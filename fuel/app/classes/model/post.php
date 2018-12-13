@@ -395,7 +395,7 @@ class Model_Post extends Model_Abstract {
                     WHERE
                         disable = 0 AND language_type = {$languageType}
                     ORDER BY
-                        cate_id
+                        cate_id ASC, id DESC
                 ) AS posts
             "))
             ->join('cates', 'LEFT')
