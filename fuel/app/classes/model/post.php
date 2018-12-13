@@ -400,7 +400,7 @@ class Model_Post extends Model_Abstract {
             "))
             ->join('cates', 'LEFT')
             ->on('cates.id', '=', self::$_table_name.'.cate_id')
-            ->where(DB::expr("rn <= 9"))
+            ->where(DB::expr("rn <= 8"))
             ->where('cates.home_position', '>', 0)
             ->where('cates.language_type', $languageType)
             ->execute()
