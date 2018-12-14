@@ -27,7 +27,10 @@ class Model_Setting extends Model_Abstract {
         'google_plus',
         'footer_text',
         'language_type',
-        'youtube'
+        'youtube',
+        'bg_header',
+        'bg_body',
+        'bg_notice'
     );
 
     protected static $_observers = array(
@@ -139,6 +142,9 @@ class Model_Setting extends Model_Abstract {
                 return false;
             }
             $param['logo'] = !empty($uploadResult['body']['logo']) ? $uploadResult['body']['logo'] : '';
+            $param['bg_body'] = !empty($uploadResult['body']['bg_body']) ? $uploadResult['body']['bg_body'] : '';
+            $param['bg_header'] = !empty($uploadResult['body']['bg_header']) ? $uploadResult['body']['bg_header'] : '';
+            $param['bg_notice'] = !empty($uploadResult['body']['bg_notice']) ? $uploadResult['body']['bg_notice'] : '';
         }
         
         // Set data
@@ -174,6 +180,15 @@ class Model_Setting extends Model_Abstract {
         }
         if (!empty($param['youtube'])) {
             $self->set('youtube', $param['youtube']);
+        }
+        if (!empty($param['bg_body'])) {
+            $self->set('bg_body', $param['bg_body']);
+        }
+        if (!empty($param['bg_header'])) {
+            $self->set('bg_header', $param['bg_header']);
+        }
+        if (!empty($param['bg_notice'])) {
+            $self->set('bg_notice', $param['bg_notice']);
         }
         if (!empty($param['footer_text'])) {
             $self->set('footer_text', $param['footer_text']);
