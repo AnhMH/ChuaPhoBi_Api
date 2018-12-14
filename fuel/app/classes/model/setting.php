@@ -81,6 +81,34 @@ class Model_Setting extends Model_Abstract {
     }
     
     /**
+     * Get general
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return int|bool User ID or false if error
+     */
+    public static function get_admin_general($param)
+    {
+        // Init
+        $result = array();
+        
+        $posts = DB::select('*')->from('posts')->where('disable', 0)->execute();
+        $result['post_count'] = count($posts);
+        
+        $notices = DB::select('*')->from('notices')->where('disable', 0)->execute();
+        $result['notice_count'] = count($notices);
+        
+        $cates = DB::select('*')->from('cates')->where('disable', 0)->execute();
+        $result['cate_count'] = count($cates);
+        
+        $contacts = DB::select('*')->from('contacts')->execute();
+        $result['contact_count'] = count($contacts);
+                
+        // Return
+        return $result;
+    }
+    
+    /**
      * Add update info
      *
      * @author AnhMH
