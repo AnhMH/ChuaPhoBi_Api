@@ -31,4 +31,11 @@ class Controller_Settings extends \Controller_App {
     public function action_detail() {
         return \Bus\Settings_Detail::getInstance()->execute();
     }
+    
+    /**
+     * Set page view
+     */
+    public function action_setpageview() {
+        return \Bus\Settings_SetPageView::getInstance()->execute();
+    }
 }

@@ -333,6 +333,7 @@ return array(
             'posts/list',
             'posts/gethomedata',
             'settings/general',
+            'settings/setpageview',
             'contacts/addupdate',
             'notices/detail'
         ),

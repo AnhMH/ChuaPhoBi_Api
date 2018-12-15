@@ -72,6 +72,11 @@ class Model_Setting extends Model_Abstract {
             'language_type' => $languageType
         ));
         
+        // Get page view
+        $pageView = Model_Page_View::find('first');
+        $result['settings']['total_view'] = !empty($pageView['total_views']) ? $pageView['total_views'] : 0;
+        $result['settings']['total_visit'] = !empty($pageView['total_visit']) ? $pageView['total_visit'] : 0;
+        
         // Get notices
         $result['notices'] = Model_Notice::get_all(array(
             'language_type' => $languageType,
