@@ -83,6 +83,11 @@ class Model_Setting extends Model_Abstract {
             'page' => 1,
             'limit' => 5
         ));
+        
+        // Get weblinks
+        $result['web_link'] = Model_Weblink::get_all(array(
+            'language_type' => $languageType
+        ));
                 
         // Return
         return $result;
