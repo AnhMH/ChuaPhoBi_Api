@@ -225,6 +225,9 @@ class Model_Post extends Model_Abstract {
         }
         if (empty($param['from_admin'])) {
             $query->where(self::$_table_name.'.disable', 0);
+            if (!empty($param['language_type'])) {
+                $query->where(self::$_table_name.'.language_type', $param['language_type']);
+            }
         }
         $data = $query->execute()->offsetGet(0);
         if (empty($data)) {
@@ -261,18 +264,14 @@ class Model_Post extends Model_Abstract {
     public static function disable($param)
     {
         $ids = !empty($param['id']) ? $param['id'] : '';
-        $disable = !empty($param['disable']) ? $param['disable'] : 0;
-        if (!is_array($ids)) {
-            $ids = explode(',', $ids);
+        $table = self::$_table_name;
+        $cond = '';
+        if (!empty($param['id'])) {
+            $cond .= "id IN ({$param['id']})";
         }
-        foreach ($ids as $id) {
-            $self = self::find($id);
-            if (!empty($self)) {
-                $self->set('disable', $disable);
-                $self->save();
-            }
-        }
-        return true;
+        
+        $sql = "DELETE FROM {$table} WHERE {$cond}";
+        return DB::query($sql)->execute();
     }
     
     /**
